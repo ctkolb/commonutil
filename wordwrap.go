@@ -31,8 +31,8 @@ func WordWrap(s string, limit int) string {
 	}
 	//range through the words
 	for _, w := range words {
-		//if the currentLine buffer + the word length is less than the screen width:
-		if currentLine.Len()+len(w) >= limit {
+		//if there's anything already on the line, and the currentLine buffer + the word length is less than the limit width
+		if currentLine.Len() > 0 && currentLine.Len()+len(w) >= limit {
 			//	Add the currentLine buffer + \n to the messageBuffer
 			messageBuffer.WriteString(currentLine.String() + "\n")
 			//	clear currentLine
@@ -41,20 +41,22 @@ func WordWrap(s string, limit int) string {
 		//Add the word into the current line buffer
 		currentLine.WriteString(w)
 		index = index + len(w)
-		var whiteSpace rune
-		if (index) <= len(runes)-1 {
+
+		//now we deal with white space that happens after that last word
+		//we have to also deal with the fact that there may be more than one whitespace rune
+		for index <= len(runes)-1 && unicode.IsSpace(runes[index]) {
 			//grab the whitespace rune that occurs after this word and hold on to it
-			whiteSpace = runes[index]
-		}
-		//Find the whitespace that corresponds to what come right after this word and add it
-		currentLine.WriteRune(whiteSpace)
-		index = index + 1
-		//if the whitespace is a newline, then we need to reset the currentLine buffer after this to reset the count
-		if whiteSpace == '\n' {
-			//dump the current line into the messagebuffer
-			messageBuffer.WriteString(currentLine.String())
-			// clear currentLine
-			currentLine.Reset()
+			whiteSpace := runes[index]
+			//Find the whitespace that corresponds to what come right after this word and add it
+			currentLine.WriteRune(whiteSpace)
+			index = index + 1
+			//if the whitespace is a newline, then we need to reset the currentLine buffer after this to reset the count
+			if whiteSpace == '\n' {
+				//dump the current line into the messagebuffer
+				messageBuffer.WriteString(currentLine.String())
+				// clear currentLine
+				currentLine.Reset()
+			}
 		}
 	}
 	//after the last word, we still need to dump currentLine in
