@@ -10,6 +10,12 @@ func WordWrap(s string, limit int) string {
 	//changes whitespace in a string into \n as needed to wrap the output such that it
 	//	doesn't exceed a specified limit (width), while not breaking the text in the middle
 	//	of a word
+
+	//if the input string is smaller than the limit, we early exit
+	if len(s) <= limit {
+		return s
+	}
+
 	//split into words on whitespace using fields
 	words := strings.Fields(s)
 	//convert the string into a rune array so we can grab certain runes as needed

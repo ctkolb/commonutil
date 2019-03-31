@@ -5,7 +5,7 @@ func StringMapContains(set map[string]int, item string) bool {
 	return ok
 }
 
-func contains(s []int, e int) bool {
+func IntSliceContains(s []int, e int) bool {
 	for _, a := range s {
 		if a == e {
 			return true
